@@ -1,0 +1,24 @@
+{
+  "Suppliers": [
+    { "sid": 1, "sname": "Acme Corp", "address": "123 Main St" },
+    { "sid": 2, "sname": "Acme Corp", "address": "456 Oak Ave" },
+    { "sid": 3, "sname": "Global Tech", "address": "789 Pine Rd" },
+    { "sid": 4, "sname": "Apex Supply", "address": "101 Elm St" }
+  ],
+  "Parts": [
+    { "pid": 101, "pname": "Gear", "color": "red" },
+    { "pid": 102, "pname": "Bolt", "color": "green" },
+    { "pid": 103, "pname": "Screw", "color": "blue" },
+    { "pid": 104, "pname": "Nut", "color": "red" },
+    { "pid": 105, "pname": "Washer", "color": "green" }
+  ],
+  "Catalog": [
+    { "sid": 1, "pid": 101, "cost": 50 },
+    { "sid": 1, "pid": 103, "cost": 20 },
+    { "sid": 2, "pid": 102, "cost": 85 },
+    { "sid": 3, "pid": 101, "cost": 45 },
+    { "sid": 3, "pid": 102, "cost": 90 },
+    { "sid": 4, "pid": 101, "cost": 150 },
+    { "sid": 4, "pid": 102, "cost": 70 }
+  ]
+}

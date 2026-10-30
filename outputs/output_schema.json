@@ -1,0 +1,273 @@
+{
+  "tables": {
+    "Building": {
+      "attributes": [
+        {
+          "name": "BuildingID",
+          "is_pk": true,
+          "is_fk": false
+        },
+        {
+          "name": "BuildingName",
+          "is_pk": false,
+          "is_fk": false
+        }
+      ]
+    },
+    "Building_OfficeLocation": {
+      "attributes": [
+        {
+          "name": "Building_BuildingID",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "Floor",
+          "is_pk": true,
+          "is_fk": false
+        },
+        {
+          "name": "Wing",
+          "is_pk": true,
+          "is_fk": false
+        }
+      ]
+    },
+    "Employee": {
+      "attributes": [
+        {
+          "name": "EmpID",
+          "is_pk": true,
+          "is_fk": false
+        },
+        {
+          "name": "FirstName",
+          "is_pk": false,
+          "is_fk": false
+        },
+        {
+          "name": "LastName",
+          "is_pk": false,
+          "is_fk": false
+        },
+        {
+          "name": "DeptCode",
+          "is_pk": false,
+          "is_fk": true
+        }
+      ]
+    },
+    "Employee_PhoneNumber": {
+      "attributes": [
+        {
+          "name": "Employee_EmpID",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "PhoneNumber",
+          "is_pk": true,
+          "is_fk": false
+        }
+      ]
+    },
+    "Department": {
+      "attributes": [
+        {
+          "name": "DeptCode",
+          "is_pk": true,
+          "is_fk": false
+        },
+        {
+          "name": "DeptName",
+          "is_pk": false,
+          "is_fk": false
+        },
+        {
+          "name": "EmpID",
+          "is_pk": false,
+          "is_fk": true
+        },
+        {
+          "name": "StartDate",
+          "is_pk": false,
+          "is_fk": false
+        }
+      ]
+    },
+    "Project": {
+      "attributes": [
+        {
+          "name": "ProjectCode",
+          "is_pk": true,
+          "is_fk": false
+        },
+        {
+          "name": "Budget",
+          "is_pk": false,
+          "is_fk": false
+        }
+      ]
+    },
+    "Apartment": {
+      "attributes": [
+        {
+          "name": "BuildingID",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "AptNum",
+          "is_pk": true,
+          "is_fk": false
+        }
+      ]
+    },
+    "Room": {
+      "attributes": [
+        {
+          "name": "BuildingID",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "AptNum",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "RoomCode",
+          "is_pk": true,
+          "is_fk": false
+        },
+        {
+          "name": "SquareFootage",
+          "is_pk": false,
+          "is_fk": false
+        }
+      ]
+    },
+    "AssignedToProject": {
+      "attributes": [
+        {
+          "name": "Employee_EmpID",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "Project_ProjectCode",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "Role",
+          "is_pk": false,
+          "is_fk": false
+        },
+        {
+          "name": "HoursAllocated",
+          "is_pk": false,
+          "is_fk": false
+        }
+      ]
+    },
+    "SupervisesProject": {
+      "attributes": [
+        {
+          "name": "Employee_EmpID",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "Department_DeptCode",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "Project_ProjectCode",
+          "is_pk": true,
+          "is_fk": true
+        },
+        {
+          "name": "OversightNotes",
+          "is_pk": false,
+          "is_fk": false
+        }
+      ]
+    }
+  },
+  "foreign_keys": [
+    [
+      "Building_OfficeLocation",
+      "Building_BuildingID",
+      "Building",
+      "BuildingID"
+    ],
+    [
+      "Employee_PhoneNumber",
+      "Employee_EmpID",
+      "Employee",
+      "EmpID"
+    ],
+    [
+      "Apartment",
+      "BuildingID",
+      "Building",
+      "BuildingID"
+    ],
+    [
+      "Room",
+      "BuildingID",
+      "Apartment",
+      "BuildingID"
+    ],
+    [
+      "Room",
+      "AptNum",
+      "Apartment",
+      "AptNum"
+    ],
+    [
+      "Department",
+      "EmpID",
+      "Employee",
+      "EmpID"
+    ],
+    [
+      "Employee",
+      "DeptCode",
+      "Department",
+      "DeptCode"
+    ],
+    [
+      "AssignedToProject",
+      "Employee_EmpID",
+      "Employee",
+      "EmpID"
+    ],
+    [
+      "AssignedToProject",
+      "Project_ProjectCode",
+      "Project",
+      "ProjectCode"
+    ],
+    [
+      "SupervisesProject",
+      "Employee_EmpID",
+      "Employee",
+      "EmpID"
+    ],
+    [
+      "SupervisesProject",
+      "Department_DeptCode",
+      "Department",
+      "DeptCode"
+    ],
+    [
+      "SupervisesProject",
+      "Project_ProjectCode",
+      "Project",
+      "ProjectCode"
+    ]
+  ]
+}

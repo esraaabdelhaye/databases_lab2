@@ -1,0 +1,121 @@
+{
+  "entities": [
+    {
+      "name": "Building",
+      "isWeak": false,
+      "attributes": [
+        { "name": "BuildingID", "isPrimaryKey": true },
+        { "name": "BuildingName" },
+        {
+          "name": "OfficeLocation",
+          "isMultiValued": true,
+          "composite": ["Floor", "Wing"]
+        }
+      ]
+    },
+    {
+      "name": "Apartment",
+      "isWeak": true,
+      "attributes": [
+        { "name": "AptNum", "isPartialKey": true }
+      ]
+    },
+    {
+      "name": "Room",
+      "isWeak": true,
+      "attributes": [
+        { "name": "RoomCode", "isPartialKey": true },
+        { "name": "SquareFootage" }
+      ]
+    },
+    {
+      "name": "Employee",
+      "isWeak": false,
+      "attributes": [
+        { "name": "EmpID", "isPrimaryKey": true },
+        {
+          "name": "FullName",
+          "composite": ["FirstName", "LastName"]
+        },
+        { "name": "PhoneNumber", "isMultiValued": true }
+      ]
+    },
+    {
+      "name": "Department",
+      "isWeak": false,
+      "attributes": [
+        { "name": "DeptCode", "isPrimaryKey": true },
+        { "name": "DeptName" }
+      ]
+    },
+    {
+      "name": "Project",
+      "isWeak": false,
+      "attributes": [
+        { "name": "ProjectCode", "isPrimaryKey": true },
+        { "name": "Budget" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "HasApartment",
+      "isIdentifying": true,
+      "entities": [
+        { "eName": "Building", "cardinality": "1" },
+        { "eName": "Apartment", "cardinality": "N", "identifiedByThis": true }
+      ]
+    },
+    {
+      "name": "HasRoom",
+      "isIdentifying": true,
+      "entities": [
+        { "eName": "Apartment", "cardinality": "1" },
+        { "eName": "Room", "cardinality": "N", "identifiedByThis": true }
+      ]
+    },
+    {
+      "name": "Manages",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "Employee", "cardinality": "1", "participation": "partial" },
+        { "eName": "Department", "cardinality": "1", "participation": "total" }
+      ],
+      "attributes": [
+        { "name": "StartDate" }
+      ]
+    },
+    {
+      "name": "WorksIn",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "Employee", "cardinality": "N", "participation": "total" },
+        { "eName": "Department", "cardinality": "1", "participation": "partial" }
+      ]
+    },
+    {
+      "name": "AssignedToProject",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "Employee", "cardinality": "M" },
+        { "eName": "Project", "cardinality": "N" }
+      ],
+      "attributes": [
+        { "name": "Role" },
+        { "name": "HoursAllocated" }
+      ]
+    },
+    {
+      "name": "SupervisesProject",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "Employee", "cardinality": "N" },
+        { "eName": "Department", "cardinality": "N" },
+        { "eName": "Project", "cardinality": "N" }
+      ],
+      "attributes": [
+        { "name": "OversightNotes" }
+      ]
+    }
+  ]
+}

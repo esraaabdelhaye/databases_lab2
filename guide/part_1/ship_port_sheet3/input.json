@@ -1,0 +1,115 @@
+{
+  "entities": [
+    {
+      "name": "SHIP",
+      "isWeak": false,
+      "attributes": [
+        { "name": "Sname", "isPrimaryKey": true },
+        { "name": "Owner" }
+      ]
+    },
+    {
+      "name": "SHIP_TYPE",
+      "isWeak": false,
+      "attributes": [
+        { "name": "Type", "isPrimaryKey": true },
+        { "name": "Tonnage" },
+        { "name": "Hull" }
+      ]
+    },
+    {
+      "name": "SHIP_MOVEMENT",
+      "isWeak": true,
+      "attributes": [
+        {
+          "name": "Time_stamp",
+          "isPartialKey": true,
+          "composite": ["Date", "Time"]
+        },
+        { "name": "Latitude" },
+        { "name": "Longitude" }
+      ]
+    },
+    {
+      "name": "PORT",
+      "isWeak": true,
+      "attributes": [
+        { "name": "Pname", "isPartialKey": true }
+      ]
+    },
+    {
+      "name": "PORT_VISIT",
+      "isWeak": true,
+      "attributes": [
+        { "name": "Start_date", "isPartialKey": true },
+        { "name": "End_date" }
+      ]
+    },
+    {
+      "name": "STATE/COUNTRY",
+      "isWeak": false,
+      "attributes": [
+        { "name": "Name", "isPrimaryKey": true },
+        { "name": "Continent" }
+      ]
+    },
+    {
+      "name": "SEA/OCEAN/LAKE",
+      "isWeak": false,
+      "attributes": [
+        { "name": "Name", "isPrimaryKey": true }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "TYPE",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "SHIP", "cardinality": "N", "participation": "partial" },
+        { "eName": "SHIP_TYPE", "cardinality": "1", "participation": "partial" }
+      ]
+    },
+    {
+      "name": "HISTORY",
+      "isIdentifying": true,
+      "entities": [
+        { "eName": "SHIP", "cardinality": "1", "participation": "partial" },
+        { "eName": "SHIP_MOVEMENT", "cardinality": "N", "identifiedByThis": true, "participation": "total" }
+      ]
+    },
+    {
+      "name": "HOME_PORT",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "SHIP", "cardinality": "N", "participation": "partial" },
+        { "eName": "PORT", "cardinality": "1", "participation": "partial" }
+      ]
+    },
+    {
+      "name": "SHIP_AT_PORT",
+      "isIdentifying": true,
+      "entities": [
+        { "eName": "SHIP", "cardinality": "M", "participation": "partial" },
+        { "eName": "PORT", "cardinality": "N", "participation": "partial" },
+        { "eName": "PORT_VISIT", "cardinality": "1", "identifiedByThis": true, "participation": "total" }
+      ]
+    },
+    {
+      "name": "IN",
+      "isIdentifying": true,
+      "entities": [
+        { "eName": "PORT", "cardinality": "N", "participation": "full" },
+        { "eName": "STATE/COUNTRY", "cardinality": "1", "participation": "partial" }
+      ]
+    },
+    {
+      "name": "ON",
+      "isIdentifying": false,
+      "entities": [
+        { "eName": "PORT", "cardinality": "N", "participation": "partial" },
+        { "eName": "SEA/OCEAN/LAKE", "cardinality": "1", "participation": "partial" }
+      ]
+    }
+  ]
+}
