@@ -266,7 +266,7 @@ Creates a dedicated junction table containing Foreign Keys referencing all $N$ p
 
 #### Rendered Relational Diagram Output (`sample_run_for_readme.png`)
 
-![Sample Run Output](comprehensive_test/sample_run_for_readme.png)
+![Sample Run Output](guide/part_1/comprehensive_test/sample_run_for_readme.png)
 
 ---
 
@@ -398,4 +398,151 @@ Creates a dedicated junction table containing Foreign Keys referencing all $N$ p
 
 | Source ERD Diagram | Generated Relational Model Output |
 | :---: | :---: |
-| ![Ship Question Diagram](ship_port_sheet3/sheet_question.png) | ![Ship Port Output Diagram](ship_port_sheet3/output.png) |
+| ![Ship Question Diagram](guide/part_1/ship_port_sheet3/sheet_question.png) | ![Ship Port Output Diagram](guide/part_1/ship_port_sheet3/output.png) |
+
+
+
+# Part 2: Relational Algebra Engine — Architecture & User Guide
+
+This module provides a full query execution pipeline for **Relational Algebra**. It includes a lexer, a top-down recursive descent parser, an AST compiler, an evaluation engine operating on in-memory tabular datasets, and a LaTeX formula renderer.
+
+---
+
+## 1. Engine Architecture & Query Pipeline
+
+The relational algebra processing engine transforms a raw text query string into a rendered mathematical expression and an evaluated tabular result through four sequential pipeline stages:
+
+```
+[ Query Text ] ──> Lexer ──> [ Tokens ] ──> Parser ──> [ AST ] ──> Executor ──> [ Table Result ]
+                                                        │
+                                                        └──> AST to LaTeX ──> [ PNG Diagram ]
+```
+
+### Module Structure
+
+The query execution pipeline is organized inside the `query_engine` and `relational_algebra` packages:
+
+```text
+query_engine/
+├── lexer.py         # Lexical scanner converts text into typed tokens
+├── parser.py        # Abstract Syntax Tree (AST) parser
+└── executor.py      # Evaluates AST nodes against in-memory Table objects
+relational_algebra/
+├── relational_algebra.py       # Core Table class with relational operations
+└── relational_algebra_utils.py # Helper utilities for typing, matching, and comparisons
+```
+
+---
+
+## 2. Supported Relational Algebra Operations
+
+The query engine supports seven core relational algebra operations and outer join variations:
+
+### A. Selection ($\sigma$)
+Filters tuples matching a logical condition. Supports logical operators (`AND`, `OR`, `NOT`) and comparison operators (`=`, `!=`, `<`, `>`, `<=`, `>=`).
+
+* **Syntax**: `SELECT[condition](Relation)`
+* **Examples**:
+  ```sql
+  SELECT[color = 'red'](Parts)
+  SELECT[age >= 21 AND city = 'Alexandria'](Students)
+  ```
+
+### B. Projection ($\pi$)
+Extracts a specified subset of attributes and automatically removes duplicate tuples.
+
+* **Syntax**: `PROJECT[attr1, attr2, ...](Relation)`
+* **Example**:
+  ```sql
+  PROJECT[sname, age](Students)
+  ```
+
+### C. Joins 
+Supports equi-joins and theta-joins across multiple conditions.
+
+* **Natural / Equi-Join**: `RelationA JOIN[key] RelationB`
+* **Left Outer Join ($\left.\bowtie\right.$)**: `RelationA LEFT JOIN[key] RelationB`
+* **Right Outer Join**: `RelationA RIGHT JOIN[key] RelationB`
+* **Theta Join**: `RelationA JOIN[RelationA.col = RelationB.col] RelationB`
+
+* **Examples**:
+  ```sql
+  Students JOIN[dept_id] Departments
+  Employees LEFT JOIN[dept_id] Departments
+  ```
+
+### D. Set Operations ($\cup$, $\cap$, $-$)
+Performs set operations on **union-compatible** relations (relations with matching column sets).
+
+* **Union ($\cup$)**: `RelationA UNION RelationB`
+* **Intersection ($\cap$)**: `RelationA INTERSECT RelationB`
+* **Set Difference ($-$)**: `RelationA MINUS RelationB` or `RelationA DIFFERENCE RelationB`
+
+### E. Aggregation ($\gamma$)
+Groups tuples by specified grouping attributes and evaluates aggregate functions (`SUM`, `AVG`, `COUNT`, `MAX`, `MIN`). Supports `COUNT(*)` and alias assignment via `AS`.
+
+* **Syntax Without Grouping**: `AGGREGATE[FUNC(col) AS alias](Relation)`
+* **Syntax With Grouping**: `AGGREGATE[group_col1, group_col2; FUNC(col) AS alias](Relation)`
+* **Examples**:
+  ```sql
+  AGGREGATE[AVG(Salary) AS avg_sal, COUNT(*) AS total](Employees)
+  AGGREGATE[dept_id; SUM(Salary) AS total_sal, MAX(Salary) AS max_sal](Employees)
+  ```
+
+---
+
+## 3. Query Grammar & Precedence
+
+The parser implements a formal grammar with strict operator precedence rules to resolve ambiguity without requiring explicit parentheses at every level.
+
+### Operator Precedence (Lowest to Highest)
+
+1. **Set Operations**: `UNION`, `INTERSECT`, `MINUS`, `DIFFERENCE` (Left-associative)
+2. **Binary Joins**: `JOIN`, `LEFT JOIN`, `RIGHT JOIN` (Left-associative)
+3. **Unary Operations**: `SELECT`, `PROJECT`, `AGGREGATE`
+4. **Parentheses**: `(...)` for explicit sub-expression grouping
+
+### Logical Condition Precedence inside `SELECT[...]` and `JOIN[...]`
+
+1. `OR` (Lowest precedence)
+2. `AND`
+3. `NOT` (Highest precedence)
+
+---
+
+## 4. Disambiguation & Qualification Rules
+
+### Attribute Resolution
+When evaluating column references in projections, selections, or join conditions:
+* **Unique Attributes**: Can be referenced directly by name (e.g., `sname`, `cost`).
+* **Ambiguous Attributes**: Attributes that exist in both relations of a join **must** be qualified using `Table.Attribute` syntax (e.g., `Students.dept_id`).
+
+### Scope Retention
+Unary operators (`SELECT`, `PROJECT`) preserve the qualification metadata of parent relations. This ensures that downstream operations in complex nested queries can still disambiguate attributes correctly.
+
+---
+
+## 5. Comprehensive Pipeline Example
+
+### Nested Query
+
+```sql
+PROJECT[sid, sname](
+    (SELECT[color = 'green'](Parts) 
+     JOIN 
+     SELECT[cost < 100](Catalog)) 
+    JOIN Suppliers
+)
+```
+
+### LaTeX Rendered Expression
+
+$$\pi_{\mathrm{sid},\,\mathrm{sname}}\left(\left(\sigma_{\mathrm{color} = \text{'green'}}\left(\mathrm{Parts}\right) \bowtie \sigma_{\mathrm{cost} < 100}\left(\mathrm{Catalog}\right)\right) \bowtie \mathrm{Suppliers}\right)$$
+![Sample Run Output](guide/part_2/img.png)
+
+### Execution Breakdown
+1. **`SELECT[color = 'green'](Parts)`**: Evaluates selection on `Parts`, returning tuples where `color == 'green'`.
+2. **`SELECT[cost < 100](Catalog)`**: Evaluates selection on `Catalog`, returning tuples where `cost < 100`.
+3. **`JOIN`**: Performs a natural join between the filtered parts and filtered catalog.
+4. **`JOIN Suppliers`**: Joins the resulting relation with the `Suppliers` table.
+5. **`PROJECT[sid, sname](...)`**: Extracts `sid` and `sname` columns, deduplicating the final result set.
