@@ -9,7 +9,7 @@ This module converts an Entity-Relationship Diagram (ERD) specified in JSON form
 When mapping an ERD to a relational model, weak entities depend on their strong owner entities to inherit foreign key attributes that make up their composite primary key. In complex schemas, weak entities can be chained in multiple tiers:
 
 $$
-\text{STATE/COUNTRY (Strong)} \longrightarrow \text{PORT (Weak Tier 1)} \longrightarrow \text{PORT\_VISIT (Weak Tier 2)}
+\text{STATE/COUNTRY (Strong)} \longrightarrow \text{PORT (Weak Tier 1)} \longrightarrow \text{PORT}_{\text{VISIT}} \text{ (Weak Tier 2)}
 $$
 
 If the transformer processes `PORT_VISIT` before `PORT` or `PORT` before `STATE/COUNTRY`, it will fail to resolve the required Primary Keys, resulting in incomplete foreign key attributes or runtime errors.
@@ -538,6 +538,7 @@ PROJECT[sid, sname](
 ### LaTeX Rendered Expression
 
 $$\pi_{\mathrm{sid},\,\mathrm{sname}}\left(\left(\sigma_{\mathrm{color} = \text{'green'}}\left(\mathrm{Parts}\right) \bowtie \sigma_{\mathrm{cost} < 100}\left(\mathrm{Catalog}\right)\right) \bowtie \mathrm{Suppliers}\right)$$
+
 ![Sample Run Output](guide/part_2/img.png)
 
 ### Execution Breakdown
