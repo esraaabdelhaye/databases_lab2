@@ -117,9 +117,6 @@ class ERTransformer:
         rel_name = rel.get("name")
         rel_attrs, _ = AttributeHelper.flatten_attributes(rel.get("attributes", []))
 
-        is_many_to_many = len(entities) > 2 or any(e.get("cardinality") in ["M", "N"] for e in entities if
-                                                   [x.get("cardinality") for x in entities].count("1") < 1)
-
         # If more than one side is 'N'/'M', or if degree > 2, build a junction table
         n_or_m_count = sum(1 for e in entities if e.get("cardinality") in ["N", "M"])
 
@@ -137,7 +134,7 @@ class ERTransformer:
 
             # Add relationship descriptive attributes
             for attr in rel_attrs:
-                junction_attrs.append({"name": attr["name"], "is_pk": False, "is_fk": False})
+                junction_attrs.append({"name": attr["name"],"is_pk": bool(attr.get("isPrimaryKey", False)), "is_fk": False})
 
             self.tables[rel_name] = {"attributes": junction_attrs}
 
@@ -157,7 +154,7 @@ class ERTransformer:
 
             # Append relationship descriptive attributes to the N-side table
             for attr in rel_attrs:
-                self.tables[n_name]["attributes"].append({"name": attr["name"], "is_pk": False, "is_fk": False})
+                self.tables[n_name]["attributes"].append({"name": attr["name"], "is_pk": bool(attr.get("isPrimaryKey", False)), "is_fk": False})
 
         # 1:1 Relationship -> Foreign Key on Total Participation side
         elif n_or_m_count == 0:
@@ -175,4 +172,4 @@ class ERTransformer:
                 self.foreign_keys.append((target_name, fk_col, source_name, pk))
 
             for attr in rel_attrs:
-                self.tables[target_name]["attributes"].append({"name": attr["name"], "is_pk": False, "is_fk": False})
+                self.tables[target_name]["attributes"].append({"name": attr["name"], "is_pk": bool(attr.get("isPrimaryKey", False)), "is_fk": False})

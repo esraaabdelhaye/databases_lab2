@@ -111,7 +111,6 @@ def _operand_text(node):
 
 
 def keep(res, src):
-    """Unary operators don't change which relation a column came from."""
     res.name = src.name
     res.qualified = getattr(src, "qualified", {})
     return res

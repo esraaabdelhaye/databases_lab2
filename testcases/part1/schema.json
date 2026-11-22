@@ -1,0 +1,192 @@
+{
+  "entities": [
+    {
+      "name": "University",
+      "attributes": [
+        { "name": "UniversityID", "isPrimaryKey": true },
+        { "name": "Name" },
+        { "name": "FoundedYear" }
+      ]
+    },
+    {
+      "name": "Department",
+      "attributes": [
+        { "name": "DeptID", "isPrimaryKey": true },
+        { "name": "Name" },
+        {
+          "name": "OfficeLocation",
+          "composite": ["Building", "Floor", "Room"]
+        }
+      ]
+    },
+    {
+      "name": "Employee",
+      "attributes": [
+        { "name": "EmployeeID", "isPrimaryKey": true },
+        {
+          "name": "Name",
+          "composite": ["FirstName", "MiddleName", "LastName"]
+        },
+        { "name": "Email" },
+        { "name": "Phone", "isMultiValued": true },
+        { "name": "HireDate" }
+      ]
+    },
+    {
+      "name": "Student",
+      "attributes": [
+        { "name": "StudentID", "isPrimaryKey": true },
+        {
+          "name": "Name",
+          "composite": ["FirstName", "LastName"]
+        },
+        { "name": "DateOfBirth" },
+        { "name": "Email" },
+        { "name": "Phone", "isMultiValued": true },
+        {
+          "name": "Address",
+          "composite": ["Street", "City", "Governorate", "PostalCode"]
+        }
+      ]
+    },
+    {
+      "name": "Course",
+      "attributes": [
+        { "name": "CourseID", "isPrimaryKey": true },
+        { "name": "Title" },
+        { "name": "CreditHours" }
+      ]
+    },
+    {
+      "name": "Section",
+      "attributes": [
+        { "name": "SectionID", "isPrimaryKey": true },
+        { "name": "Semester" },
+        { "name": "AcademicYear" },
+        { "name": "Capacity" }
+      ]
+    },
+    {
+      "name": "Classroom",
+      "attributes": [
+        { "name": "ClassroomID", "isPrimaryKey": true },
+        { "name": "Building" },
+        { "name": "RoomNumber" },
+        { "name": "Capacity" }
+      ]
+    },
+    {
+      "name": "Dependent",
+      "isWeak": true,
+      "attributes": [
+        { "name": "DependentName", "isPartialKey": true },
+        { "name": "DateOfBirth" },
+        { "name": "RelationshipToEmployee" }
+      ]
+    },
+    {
+      "name": "ResearchProject",
+      "attributes": [
+        { "name": "ProjectID", "isPrimaryKey": true },
+        { "name": "Title" },
+        { "name": "StartDate" },
+        { "name": "Budget" }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "BelongsTo",
+      "entities": [
+        { "eName": "Department", "cardinality": "N" },
+        { "eName": "University", "cardinality": "1" }
+      ]
+    },
+    {
+      "name": "WorksIn",
+      "entities": [
+        { "eName": "Employee", "cardinality": "N" },
+        { "eName": "Department", "cardinality": "1" }
+      ],
+      "attributes": [
+        { "name": "StartDate" }
+      ]
+    },
+    {
+      "name": "StudiesIn",
+      "entities": [
+        { "eName": "Student", "cardinality": "N" },
+        { "eName": "Department", "cardinality": "1" }
+      ]
+    },
+    {
+      "name": "Offers",
+      "entities": [
+        { "eName": "Department", "cardinality": "1" },
+        { "eName": "Course", "cardinality": "N" }
+      ]
+    },
+    {
+      "name": "HasSection",
+      "entities": [
+        { "eName": "Course", "cardinality": "1" },
+        { "eName": "Section", "cardinality": "N" }
+      ]
+    },
+    {
+      "name": "EnrolledIn",
+      "entities": [
+        { "eName": "Student", "cardinality": "M" },
+        { "eName": "Section", "cardinality": "N" }
+      ],
+      "attributes": [
+        { "name": "EnrollmentDate" },
+        { "name": "Grade" }
+      ]
+    },
+    {
+      "name": "ScheduledIn",
+      "entities": [
+        { "eName": "Section", "cardinality": "N" },
+        { "eName": "Classroom", "cardinality": "1" }
+      ],
+      "attributes": [
+        { "name": "DayOfWeek" },
+        { "name": "StartTime" },
+        { "name": "EndTime" }
+      ]
+    },
+    {
+      "name": "HasDependent",
+      "isIdentifying": true,
+      "entities": [
+        { "eName": "Employee", "cardinality": "1" },
+        { "eName": "Dependent", "cardinality": "N" }
+      ]
+    },
+    {
+      "name": "SupervisesProject",
+      "entities": [
+        { "eName": "Employee", "cardinality": "N" },
+        { "eName": "ResearchProject", "cardinality": "N" },
+        { "eName": "Department", "cardinality": "N" }
+      ],
+      "attributes": [
+        { "name": "Responsibility" },
+        { "name": "AllocationPercentage" }
+      ]
+    },
+    {
+      "name": "UsesResource",
+      "entities": [
+        { "eName": "ResearchProject", "cardinality": "N" },
+        { "eName": "Employee", "cardinality": "N" },
+        { "eName": "Classroom", "cardinality": "N" }
+      ],
+      "attributes": [
+        { "name": "UsageDate", "isPrimaryKey": true},
+        { "name": "HoursUsed" }
+      ]
+    }
+  ]
+}

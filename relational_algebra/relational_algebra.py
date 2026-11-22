@@ -159,7 +159,7 @@ class Table:
             names.append(alias or f"{fn}({col})")
         out_cols = list(group_cols) + names
         if len(set(out_cols)) != len(out_cols):
-            raise ValueError("Duplicate output column names; use AS to rename them.")
+            raise ValueError("Duplicate output column names;")
 
         def num(v, col):
             if Utils.is_number(v):
